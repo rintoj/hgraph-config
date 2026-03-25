@@ -47,7 +47,7 @@ application's configuration.
 **`src/config.ts`**
 
 ```typescript
-import { configure, str, bool, port, num, email, url, json, nodeEnv } from '@hgraph/config'
+import { configure, str, bool, port, num, email, url, json, duration, nodeEnv } from '@hgraph/config'
 import { resolve } from 'path'
 
 export const config = configure(
@@ -71,7 +71,9 @@ export const config = configure(
 
     // Security (use environment variables for these sensitive values)
     JWT_SECRET: str({ devDefault: 'local-secret-for-development' }),
-    JWT_EXPIRY: str({ default: '15m' }),
+    // Note: duration() returns milliseconds (e.g., '15m' → 900000).
+    // If your JWT library expects a string like '15m', use str() instead.
+    JWT_EXPIRY: duration({ default: '15m', desc: 'JWT token expiry in milliseconds.' }),
 
     // Third-Party Services
     SUPPORT_EMAIL: email(),
@@ -116,6 +118,13 @@ values into the correct types.
 | **`email()`** | Ensures the value is a valid email address format.                      | `"user@example.com"`                                                          |
 | **`url()`**   | Ensures the value is a URL with a protocol and hostname.                | `"https://api.example.com"`                                                   |
 | **`json()`**  | Parses the input string using `JSON.parse`.                             | `'{"key": "value"}'`                                                          |
+| **`duration()`** | Parses a human-readable duration string into milliseconds using [`ms`](https://github.com/vercel/ms). Returns a `number`. Bare numbers like `"100"` are rejected — use `"100ms"` instead. | `"1d"`, `"2h"`, `"30s"`, `"500ms"` |
+
+The package also re-exports the `StringValue` type from `ms`, which you can use to type duration string inputs:
+
+```typescript
+import type { StringValue } from '@hgraph/config'
+```
 
 ### Validator Options
 
