@@ -1,5 +1,7 @@
 import * as dotenv from 'dotenv'
-import { CleanedEnv, cleanEnv, str } from 'envalid'
+import { CleanedEnv, cleanEnv, makeValidator, str } from 'envalid'
+import ms from 'ms'
+import type { StringValue } from 'ms'
 import { resolve } from 'path'
 
 const environmentMap = {
@@ -38,6 +40,16 @@ export function configure<S>(spec: S, options?: ConfigOptions): CleanedEnv<S> {
     ...spec,
   })
 }
+
+export const duration = makeValidator<number>((input: string) => {
+  const result = ms(input as StringValue)
+  if (result === undefined) {
+    throw new Error(`Invalid duration: "${input}". Expected a value like "1d", "2h", "30s", etc.`)
+  }
+  return result
+})
+
+export type { StringValue } from 'ms'
 
 export {
   bool,
