@@ -47,7 +47,7 @@ application's configuration.
 **`src/config.ts`**
 
 ```typescript
-import { configure, str, bool, port, num, email, url, json, nodeEnv } from '@hgraph/config'
+import { configure, str, bool, port, num, email, url, json, duration, nodeEnv } from '@hgraph/config'
 import { resolve } from 'path'
 
 export const config = configure(
@@ -71,7 +71,7 @@ export const config = configure(
 
     // Security (use environment variables for these sensitive values)
     JWT_SECRET: str({ devDefault: 'local-secret-for-development' }),
-    JWT_EXPIRY: str({ default: '15m' }),
+    JWT_EXPIRY: duration({ default: '15m', desc: 'JWT token expiry as a duration string.' }),
 
     // Third-Party Services
     SUPPORT_EMAIL: email(),
@@ -116,6 +116,7 @@ values into the correct types.
 | **`email()`** | Ensures the value is a valid email address format.                      | `"user@example.com"`                                                          |
 | **`url()`**   | Ensures the value is a URL with a protocol and hostname.                | `"https://api.example.com"`                                                   |
 | **`json()`**  | Parses the input string using `JSON.parse`.                             | `'{"key": "value"}'`                                                          |
+| **`duration()`** | Parses a human-readable duration string into milliseconds using [`ms`](https://github.com/vercel/ms). | `"1d"`, `"2h"`, `"30s"`, `"500ms"` |
 
 ### Validator Options
 
