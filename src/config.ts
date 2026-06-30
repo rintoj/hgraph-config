@@ -44,7 +44,7 @@ export function configure<S>(spec: S, options?: ConfigOptions): CleanedEnv<S> {
   });
 }
 
-export const duration = makeValidator<number>((input: string) => {
+const _duration = makeValidator<number>((input: string) => {
   if (/^\d+$/.test(input)) {
     throw new Error(
       `Invalid duration: "${input}". Bare numbers are ambiguous. Use a unit suffix like "${input}ms", "${input}s", etc.`
@@ -58,6 +58,13 @@ export const duration = makeValidator<number>((input: string) => {
   }
   return result;
 });
+
+type DurationSpec = Omit<Parameters<typeof _duration>[0], "default"> & {
+  default?: string | number;
+};
+
+export const duration = (spec?: DurationSpec) =>
+  _duration(spec as Parameters<typeof _duration>[0]);
 
 export type { StringValue } from "ms";
 
