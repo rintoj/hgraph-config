@@ -111,7 +111,7 @@ values into the correct types.
 | Function      | Description                                                             | Parsing Rules                                                                 |
 | :------------ | :---------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
 | **`str()`**   | Ensures a string value is present. An empty string is considered valid. | `my-api-key`                                                                  |
-| **`bool()`**  | Parses the input into a boolean.                                        | `"true"`, `"1"`, `"t"` become `true`. `"false"`, `"0"`, `"f"` become `false`. |
+| **`bool()`**  | Lenient boolean. Only affirmative values are `true`; **everything else — including unrecognized values, empty strings, and unset vars — is `false`**. Never throws. | `"true"`, `"yes"`, `"y"`, `"t"`, `"1"` (case-insensitive, trimmed) become `true`. `"false"`, `"no"`, `"0"`, `""`, `"maybe"` become `false`. |
 | **`num()`**   | Parses the input into a JavaScript `Number`.                            | `"42"`, `"0.23"`, `"1e5"`                                                     |
 | **`port()`**  | Ensures the value is a valid TCP port.                                  | A number between 1 and 65535.                                                 |
 | **`host()`**  | Ensures the value is a domain name or an IP address (v4 or v6).         | `"example.com"`, `"127.0.0.1"`, `"::1"`                                       |

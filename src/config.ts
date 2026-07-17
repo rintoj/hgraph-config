@@ -1,5 +1,11 @@
 import * as dotenv from "dotenv";
-import { CleanedEnv, cleanEnv, makeValidator, str } from "envalid";
+import {
+  CleanedEnv,
+  cleanEnv,
+  makeExactValidator,
+  makeValidator,
+  str,
+} from "envalid";
 import ms from "ms";
 import type { StringValue } from "ms";
 import { resolve } from "path";
@@ -66,10 +72,28 @@ type DurationSpec = Omit<Parameters<typeof _duration>[0], "default"> & {
 export const duration = (spec?: DurationSpec) =>
   _duration(spec as Parameters<typeof _duration>[0]);
 
+/**
+ * Lenient boolean validator.
+ *
+ * Unlike envalid's built-in `bool` (which throws on any unrecognized value,
+ * including an empty string), this treats ONLY the affirmative tokens as
+ * `true` and coerces everything else — empty strings, typos, unset vars — to
+ * `false`. It never throws, so a missing/blank env var degrades to `false`
+ * rather than crashing startup.
+ *
+ * Truthy:  true, "true", "yes", "y", "t", "1"  (case-insensitive, trimmed)
+ * Falsy:   everything else (e.g. false, "false", "no", "n", "f", "0", "", "maybe")
+ */
+export const bool = makeExactValidator<boolean>((input) => {
+  if (typeof input === "boolean") return input;
+  return ["true", "yes", "y", "t", "1"].includes(
+    String(input).trim().toLowerCase()
+  );
+});
+
 export type { StringValue } from "ms";
 
 export {
-  bool,
   email,
   EnvError,
   EnvMissingError,
