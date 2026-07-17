@@ -81,12 +81,14 @@ export const duration = (spec?: DurationSpec) =>
  * `false`. It never throws, so a missing/blank env var degrades to `false`
  * rather than crashing startup.
  *
- * Truthy:  true, "true", "yes"  (case-insensitive, whitespace-trimmed)
- * Falsy:   everything else (e.g. false, "false", "no", "", "maybe")
+ * Truthy:  true, "true", "yes", "y", "t", "1"  (case-insensitive, trimmed)
+ * Falsy:   everything else (e.g. false, "false", "no", "n", "f", "0", "", "maybe")
  */
 export const bool = makeExactValidator<boolean>((input) => {
   if (typeof input === "boolean") return input;
-  return ["true", "yes"].includes(String(input).trim().toLowerCase());
+  return ["true", "yes", "y", "t", "1"].includes(
+    String(input).trim().toLowerCase()
+  );
 });
 
 export type { StringValue } from "ms";
